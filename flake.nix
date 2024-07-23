@@ -27,7 +27,7 @@
           zephyr-sdk = pkgs.stdenv.mkDerivation {
             name = "zephyr-sdk-patched";
             nativeBuildInputs = with pkgs; [ autoPatchelfHook ];
-            buildInputs = with pkgs; [ pkgs.stdenv.cc.cc.lib python38 ];
+            buildInputs = with pkgs; [ pkgs.stdenv.cc.cc.lib python3 ];
             installPhase = "ls -lah";
             src = inputs.zephyr-sdk;
             buildPhase = ''
