@@ -71,7 +71,7 @@
           let
             westWorkspace = pkgs.fetchWestWorkspace {
               url = "https://github.com/nrfconnect/sdk-nrf";
-              rev = "v2.1.0";
+              rev = "v2.6.0";
               sha256 = "sha256-LoL0SzPiKfXxWnZdbx+3m0bzyPeHovWNlmkFQsmiR7g=";
             };
           in pkgs.mkShell {
