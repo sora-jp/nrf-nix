@@ -27,7 +27,7 @@
           zephyr-sdk = pkgs.stdenv.mkDerivation {
             name = "zephyr-sdk-patched";
             nativeBuildInputs = with pkgs; [ autoPatchelfHook ];
-            buildInputs = with pkgs; [ pkgs.stdenv.cc.cc.lib python3 ];
+            buildInputs = with pkgs; [ pkgs.stdenv.cc.cc.lib python38 ];
             installPhase = "ls -lah";
             src = inputs.zephyr-sdk;
             buildPhase = ''
@@ -37,7 +37,7 @@
           # It's not entirely clear based on the documentation which of all of these
           # dependencies are actually necessary to build Zephyr, the list may increase
           # depending on the ongoing changes upstream
-          zephyrPython = pkgs.python3.withPackages (p: with p; [
+          zephyrPython = pkgs.python38.withPackages (p: with p; [
             docutils
             wheel
             breathe
