@@ -27,14 +27,14 @@ let
       mkdir -p $out
       west init -m ${url} --mr ${rev} $out
       cd $out
-      west update --narrow -o=--depth=1
-      for i in $(find . -name '.git')
-      do
-        rm -rf $i
-        echo removing $i for purity!
-        echo -e "$(dirname $i)" >> fakeTheseRepos
-      done
-      sort -o fakeTheseRepos fakeTheseRepos
+      west update
+      #for i in $(find . -name '.git')
+      #do
+        #rm -rf $i
+        #echo removing $i for purity!
+        #echo -e "$(dirname $i)" >> fakeTheseRepos
+      #done
+      #sort -o fakeTheseRepos fakeTheseRepos
     '';
 in runCommand "fakegit-west-workspace-${rev}" {
   src = fetched-west-workspace;
@@ -52,7 +52,7 @@ in runCommand "fakegit-west-workspace-${rev}" {
   export HOME=$TMP
   # Git is not atomic by default due to auto-gc
   # https://stackoverflow.com/questions/28092485/how-to-prevent-garbage-collection-in-git
-  git config --global gc.autodetach false
+  #git config --global gc.autodetach false
 
   # The west commands needs to find .git
   # Remove all .git folders and replace with BS
@@ -69,14 +69,14 @@ in runCommand "fakegit-west-workspace-${rev}" {
     git -C "$1" checkout --detach manifest-rev
   }
 
-  setupFakeGit .
+  #setupFakeGit .
 
-  while read -r i
-  do
-    (
-      setupFakeGit "$i"
-    ) &
-  done < fakeTheseRepos
+  #while read -r i
+  #do
+    #(
+      #setupFakeGit "$i"
+    #) &
+  #done < fakeTheseRepos
   wait
   ${postFetch}
   cd -

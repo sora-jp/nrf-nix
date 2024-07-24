@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     zephyr-sdk = {
-      url = "https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.15.2/zephyr-sdk-0.15.2_linux-x86_64.tar.gz";
+      url = "https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.8/zephyr-sdk-0.16.8_linux-x86_64.tar.xz";
       flake = false;
     };
   };
@@ -37,7 +37,7 @@
           # It's not entirely clear based on the documentation which of all of these
           # dependencies are actually necessary to build Zephyr, the list may increase
           # depending on the ongoing changes upstream
-          zephyrPython = pkgs.python38.withPackages (p: with p; [
+          zephyrPython = pkgs.python39.withPackages (p: with p; [
             docutils
             wheel
             breathe
@@ -71,84 +71,22 @@
           let
             westWorkspace = pkgs.fetchWestWorkspace {
               url = "https://github.com/nrfconnect/sdk-nrf";
-              rev = "v2.6.0";
-              sha256 = "sha256-LoL0SzPiKfXxWnZdbx+3m0bzyPeHovWNlmkFQsmiR7g=";
+              rev = "v2.7.0";
+              sha256 = "sha256-hgSCnMACMY0dq6LhtyBBvl4ZSeKa21RVwzIoaytpjxE=";
             };
           in pkgs.mkShell {
             shellHook = ''
 #            export GNUARMEMB_TOOLCHAIN_PATH=$#{pkgs.gcc-arm-embedded-11}
 
-            echo "Creating mutable west workspace in /tmp/nrf-nix and forcing VSCode to use it"
-            rm -rf /tmp/nrf-nix
-            cp -r --no-preserve=mode ${westWorkspace} /tmp/nrf-nix
-
             export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
             export ZEPHYR_SDK_INSTALL_DIR=${pkgs.zephyr-sdk};
-            export ZEPHYR_BASE="/tmp/nrf-nix/zephyr"
             export PATH=${pkgs.zephyr-sdk}/arm-zephyr-eabi/bin:$PATH
             export PYTHONPATH=${pkgs.zephyrPython}/lib/python3.10/site-packages:$PYTHONPATH
           '';
           buildInputs = with pkgs;
           let
-            otherExtensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-              {
-                name = "nrf-connect-extension-pack";
-                publisher = "nordic-semiconductor";
-                version = "2023.6.6";
-                sha256 = "sha256-pq+O2Nctd4Op8pW6lLXI1J1QBYtUeo0thczfnSe+8CA=";
-              }
-              {
-                name = "nrf-terminal";
-                publisher = "nordic-semiconductor";
-                version = "2023.6.78";
-                sha256 = "sha256-vJtlarLrlzcGmnXr+mqEeL3L7dKskuFXE9/mgS/1dN0=";
-              }
-              {
-                name = "nrf-kconfig";
-                publisher = "nordic-semiconductor";
-                version = "2023.6.51";
-                sha256 = "sha256-Bx68ANr/efOVTAqf1JXi8ZMnzHCKwf+pHE+YD710LUE=";
-              }
-              {
-                name = "nrf-devicetree";
-                publisher = "nordic-semiconductor";
-                version = "2023.6.108";
-                sha256 = "sha256-V+jloKRu9komxzRdEIjTIcduwpD9fimXwTAgrZWzeiM=";
-              }
-              {
-                name = "nrf-connect";
-                publisher = "nordic-semiconductor";
-                version = "2022.7.111";
-                sha256 = "sha256-td97z4H5/G8Xgy66kY0N5z/eqWf15S0BL0FtvquYgUE=";
-              }
-              {
-                name = "gnu-mapfiles";
-                publisher = "trond-snekvik";
-                version = "1.1.0";
-                sha256 = "sha256-JHdOqCjHbxHlth2PQ6r7SfNqedKwu6Fsot/mhPPFJhA=";
-              }
-          ];
-            vscodeFhs = (pkgs.vscode-fhsWithPackages (p: with p; [
-              nrf-command-line-tools
-              segger-jlink
-              dtc
-              gn
-              gperf
-              ninja
-              cmake
-              zephyrPython
-            ]));
-            myVscode = vscode-with-extensions.override {
-              vscode = vscodeFhs;
-              # https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-connect-extension-pack
-              vscodeExtensions = with pkgs.vscode-extensions; [
-                ms-vscode.cpptools
-                twxs.cmake
-              ] ++ otherExtensions;
-            };
           in [
-            myVscode
-            nrfconnect
+              nrfconnect
               nrf-command-line-tools
               dtc
               gn
