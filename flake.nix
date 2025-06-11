@@ -37,7 +37,7 @@
           # It's not entirely clear based on the documentation which of all of these
           # dependencies are actually necessary to build Zephyr, the list may increase
           # depending on the ongoing changes upstream
-          zephyrPython = pkgs.python39.withPackages (p: with p; [
+          zephyrPython = pkgs.python310.withPackages (p: with p; [
             docutils
             wheel
             breathe
@@ -71,7 +71,7 @@
           let
             westWorkspace = pkgs.fetchWestWorkspace {
               url = "https://github.com/nrfconnect/sdk-nrf";
-              rev = "v2.7.0";
+              rev = "v2.9.1";
               sha256 = "sha256-hgSCnMACMY0dq6LhtyBBvl4ZSeKa21RVwzIoaytpjxE=";
             };
           in pkgs.mkShell {
@@ -82,6 +82,7 @@
             export ZEPHYR_SDK_INSTALL_DIR=${pkgs.zephyr-sdk};
             export PATH=${pkgs.zephyr-sdk}/arm-zephyr-eabi/bin:$PATH
             export PYTHONPATH=${pkgs.zephyrPython}/lib/python3.10/site-packages:$PYTHONPATH
+            export WESTWORKSPACE=${westWorkspace}
           '';
           buildInputs = with pkgs;
           let
